@@ -1,5 +1,5 @@
 
-![](img/bletchley.jpg)
+![](bletchley.jpg)
 <br>
 <br>
 
@@ -39,7 +39,7 @@ Here are some other bets (legal in England, not the U.S.) that were offered at t
 
 ---
 
-![](img/lc-odds.png)
+![](lc-odds.png)
 <center> [source](https://www.reddit.com/r/dataisbeautiful/comments/4dm169/odds_on_leicester_to_win_the_premier_league_after/)</center> 
 
 
