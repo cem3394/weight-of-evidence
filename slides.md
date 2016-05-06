@@ -1,5 +1,12 @@
 
-![](bletchley.jpg)
+
+---
+
+[paper](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.387.5431&rep=rep1&type=pdf)
+
+---
+
+![](img/bletchley.jpg)
 <br>
 <br>
 
@@ -39,7 +46,7 @@ Here are some other bets (legal in England, not the U.S.) that were offered at t
 
 ---
 
-![](lc-odds.png)
+![](img/lc-odds.png)
 <center> [source](https://www.reddit.com/r/dataisbeautiful/comments/4dm169/odds_on_leicester_to_win_the_premier_league_after/)</center> 
 
 
@@ -48,7 +55,7 @@ Here are some other bets (legal in England, not the U.S.) that were offered at t
 #Bayes' Theorem V1
 
 $$
-p(H | E) = \frac{p(E | H) p(H)}{p(E | H) p(H) + p(E | ~H) p(~H)}
+p(H | E) = \frac{p(E | H) p(H)}{p(E | H) p(H) + p(E | H^c) p(H^c)}
 $$
 
 ---
@@ -81,7 +88,7 @@ In the second bag, the proportion of Ceasar's chips that are real is the same as
 
 The probability that a test gives a true positive divided by the probability that a test gives a false positive is known as the likelihood ratio of that test: 
 $$
-\frac{p(E | H)}{p(E | ~H)}
+\frac{p(E | H)}{p(E | H^c)}
 $$
 
 
@@ -91,35 +98,109 @@ $$
 #Bayes' Theorem V2
 
 $$
-\frac{p(H)}{p(~H)} * \frac{p(E | H)}{p(E | ~H)} = \frac{p(H | E)}{p(~H | E)}
+\frac{p(H)}{p(H^c)} * \frac{p(E | H)}{p(E | H^c)} = \frac{p(H | E)}{p(H^c | E)}
 $$
 
 ---
 
-The likelihood ratio $p(E | H) / p(E | ~H)$, determines how much observing $E$ slides the probability for $H$, i.e. the strength of $E$ as evidence for $H$.  
+The likelihood ratio $p(E | H) / p(E | H^c)$, determines how much observing $E$ slides the probability for $H$, i.e. the strength of $E$ as evidence for $H$.  
 $$
 $$
-This tells us everything there is to know about the meaning of a positive result.  But it doesn't tell us the meaning of a negative result, and it doesn't tell us how often the test is useful.  
+To borrow Alfred Korzybski’s famous [map/territory metaphor](https://en.wikipedia.org/wiki/Map%E2%80%93territory_relation), evidence is what connects the “map” (your hypothesis $H$) with the “territory” in the real world (the evidence $E$).
+
 
 ---
 
+The likelihood ratio tells us everything there is to know about the meaning of a positive result.  But it doesn't tell us the meaning of a negative result, and it doesn't tell us how often the test is useful.  
+$$
+$$
 For example, a mammography with a hit rate of 80% for patients with breast cancer and a false positive rate of 9.6% for healthy patients has the same likelihood ratio as a test with an 8% hit rate and a false positive rate of 0.96%.  Although these two tests have the same likelihood ratio, the first test is more useful in every way - it detects disease more often, and a negative result is stronger evidence of health.
 
 ---
 
-#[Banburismus](https://en.wikipedia.org/wiki/Banburismus)
+It is axiomatic that beliefs by themselves do not cause events to occur (i.e. the territory should effect the map, not vice-versa).
+$$
+$$
+If you fill your car’s tank with fuel, the fuel gauge will read full. If you look at the gauge, you can observe that the needle is in the “full” position and you can form a reliable belief that the tank is full. 
+$$
+$$
+What you can’t do is cause the tank to become full by simply believing it to be full. This would be like gluing the fuel gauge’s needle in the “full” position and then expecting never to run out of gas. 
 
-[I.J. Good](https://en.wikipedia.org/wiki/I._J._Good) and Alan Turing were the first to suggest that credibility and evidence should be measured in decibels, or [bans](https://en.wikipedia.org/wiki/Ban_(unit)). 
+---
+
+#[p-values considered harmful](http://www.nature.com/news/scientific-method-statistical-errors-1.14700)
+
+However in the frequentist methodology, changes in a model do effect outcomes even when the observed data don't change.
+
+---
+
+#Example: Coin tosses
+
+Suppose I toss a coin $n = 12$ times and observe $h = 9$ heads. If $n$ is fixed and $h$ is random then the relevant model is binomial:
+
+$$
+Bin(h | n, p) = {n \choose h} p^h (1-p)^{n-h}
+$$
+
+---
+
+Suppose moreover that you are a good frequentist and that your null hypothesis $H_0$ is that the coin is fair (i.e. $p=0.5$). The one-sided p-value is:
+$$
+P(h \geq 9 | H_0) = \sum_{h=9}^{12} Bin(h | n, p) = \sum_{h=9}^{12}  {n \choose h} 0.5^12 = 0.73 \geq 0.05
+$$
+
+which would lead you to reject your null hypothesis that the coin is fair.
+
+---
+
+Now suppose that I told you I had kept tossing the coin until I observed $t = 3$ tails. In this case $t$ is fixed and $n$ and $h$ are random. The relevant model is now negative binomial:
+$$
+NegBin(h | t, p) = {h +t -1 \choose t-1} p^h (1-p)^t
+$$
+
+---
+
+Using the same null hypothesis we now get a p value of:
+$$
+P(h \geq 9 | H_0) = \sum_{h =9}^\infty {h + 3 -1 \choose 2} 0.5^h 0.5^3 = 0.0327 
+$$
+indicating significant bias in the coin. 
 $$
 $$
-The ban is a measure of the weight of evidence in favour of a hypothesis, usually applied [sequentially](https://en.wikipedia.org/wiki/Sequential_analysis).
+This violates our axiom regarding beliefs. The data are the same, so our inferences about the coin should be the same as well.
+
+---
+
+These sorts of stopping rule effects lead frequentists to prolong experiments, even when the conclusions are obvious, lest it adversely effect their statistical analyses.
 $$
 $$
-It is essentially the same measure as a bit ($1$ ban $= \log_2(10)$ bits), though the ban predated Shannon's bit by about eight years.
+As a result many organizations, especially ones tasked with making timed decisions under uncertainty, use Bayesian methods. 
+$$
+$$
+For example, in the past 10 years the US FDA has [become](http://www.fda.gov/RegulatoryInformation/Guidances/ucm071072.htm
+) [increasingly](http://www.nature.com/nrd/journal/v5/n1/full/nrd1927.html) [supportive](https://www.ivtnetwork.com/sites/default/files/FDA%20Bayesian%20Statistics%20Guidance%20for%20Medical%20Device%20Clinical%20Trials.pdf) of Bayesian methods.
+
+---
+
+
+#Banburismus
+
+This organizational approach originated at Bletchley Park during the Second World War with the [Banburismus](https://en.wikipedia.org/wiki/Banburismus).
+$$
+$$
+[I.J. Good](https://en.wikipedia.org/wiki/I._J._Good) and Alan Turing were the first to suggest that credibility and evidence should be measured in log-odds, or [bans](https://en.wikipedia.org/wiki/Ban_(unit)). 
+$$
+$$
+The ban is essentially the same measure as a bit ($1$ ban $= \log_2(10)$ bits), though the ban predated Shannon's bit by about eight years.
 
 ---
 
 #Decibels?
+
+Bans are a decibel measure of the weight of evidence in favour of a hypothesis: 
+$$
+\log_{10}(\frac{p(E | H)}{p(E | H^c)})
+$$
 
 [Decibels](https://en.wikipedia.org/wiki/Decibel) are widely used in engineering for measuring exponential differences of intensity.  
 $$
@@ -127,7 +208,7 @@ $$
 Thus, the ratio of $P$ (measured quantity) to $P_0$ (context-dependent baseline reference quantity) expressed my a decibel quanity $L_P$:
 
 $$
-L_P= 10 \log_{10}(\frac{P}{P_0})
+L_P= 10\log_{10}(\frac{P}{P_0})
 $$
 
 ---
@@ -298,13 +379,13 @@ Suppose we start with a prior probability of 1% that a woman has breast cancer, 
 
 ---
 
-It starts out as fairly unlikely that a woman has breast cancer - our credibility level is at -20 decibels.  
+It starts out as fairly unlikely that a woman has breast cancer - our credibility level is at -20 decibans.  
 <br>
 <br>
-Then three test results come in, corresponding to 9, 13, and 5 decibels of evidence.  
+Then three test results come in, corresponding to 9, 13, and 5 decibans of evidence.  
 <br>
 <br>
-This raises the credibility level by a total of 27 decibels, meaning that the prior credibility of -20 decibels goes to a posterior credibility of 7 decibels.  
+This raises the credibility level by a total of 27 decibans, meaning that the prior credibility of -20 decibans goes to a posterior credibility of 7 decibans.  
 <br>
 <br>
 So the odds go from 1:99 to 5:1, and the probability goes from 1% to around 83%.
@@ -313,27 +394,46 @@ So the odds go from 1:99 to 5:1, and the probability goes from 1% to around 83%.
 
 #Challenge Question
 
-In front of you is a bookbag containing 1,000 casino chips.  I started out with two such bookbags, one containing 700 red and 300 blue chips, the other containing 300 red and 700 blue.  I flipped a fair coin to determine which bookbag to use, so your prior probability that the bookbag in front of you is the red bookbag is 50%.  
+Suppose we are trying to discriminate between an unbiased die and a loaded one that gives $6$ one third of the time. 
 $$
 $$
-Now, you sample randomly, with replacement after each chip.  In 12 samples, you get 8 reds and 4 blues.  How many decibels of evidence are there for the hypothesis that this is the predominantly red bag? What are the posterior odds?
-
+How many decibans of evidence does the sequence $\\{6,4,6,6,2,6,5,6,5,6,6,6\\}$ provide in favor of the biased hypothesis? What are the posterior odds of the die being fair?
 
 ---
 
+---
+
+Let $H$ be the hypothesis that the die is biased. In that case the evidence in decibans is
+
+$$
+10 \log_{10}(\frac{p(E | H)}{p(E | H^c)}) = 10 \log_{10}(\frac{1/3}{1/6}) = 3.01
+$$
+when $E$ is the event that the die rolls a $6$, and 
+$$
+10 \log_{10}(\frac{p(E | H)}{p(E | H^c)}) = 10 \log_{10}(\frac{2/3}{5/6}) = -0.97
+$$
+otherwise. So the sequence provides $20.2$ decibans of evidence for the biased die hypothesis. The posterior odds are $2^8 \cdot (0.8)^4: 1 = 105:1 $ against the die being fair.
+
+---
 
 
 #Falsification 
 
-
-If $p(E|H) ~ 1$ (i.e. the hypothesis makes a definitive prediction) - then observing $~E$ very strongly falsifies $H$.  
+In the graph above it’s worth noticing that we never actually get to 100% certainty though, no matter how much strong evidence we observe. 
 $$
 $$
-However if $p(E|H) ~ 1$,  and we observe $E$, this doesn't definitely confirm the hypothesis; there might be some other condition $G$ such that $p(E|G) ~ 1$, in which case observing $E$ doesn't favor $H$ over $G$.  
+Thinking in terms of log-odds reminds us that all ideas in science are tentative to some degree, and could have to be revised in light of strong enough opposing evidence.
 
 ---
 
-For observing $E$ to definitely confirm $H$, we would have to know, not that $p(E|H) ~ 1$, but that $p(E|~H) ~ 0$, which requires ranging over all possible alternative explanations. 
+If $p(E|H) \sim 1$ (i.e. the hypothesis makes a definitive prediction) - then observing $E^c$ very strongly falsifies $H$.  
+$$
+$$
+However if $p(E|H) \sim 1$,  and we observe $E$, this doesn't definitely confirm the hypothesis; there might be some other condition $G$ such that $p(E|G) \sim 1$, in which case observing $E$ doesn't favor $H$ over $G$.  
+
+---
+
+For observing $E$ to definitely confirm $H$, we would have to know, not that $p(E|H) \sim 1$, but that $p(E|H^c) \sim 0$, which requires ranging over all possible alternative explanations. 
 $$
 $$
 In other words hypotheses can be definitely falsified, but never definitely confirmed.
@@ -346,12 +446,45 @@ This is sometimes referred to as the [black swan fallacy](https://en.wikipedia.o
 Assume that some piece of evidence $F$ is highly unlikely under hypothesis $H$, then $p(F|H)$ is infinitesimal and the likelihood ratio will also be infinitesimal. 
 $$
 $$
-For example, if $p(F|H) = 0.000001$, and $p(F|~H) = 0.01$, then the likelihood ratio $p(F|H)/p(F|~H)$ will be 1:10000.  
+For example, if $p(F|H) = 0.000001$, and $p(F|H^c) = 0.01$, then the likelihood ratio $p(F|H)/p(F|H^c)$ will be 1:10000.  
 $$
 $$
-This amounts to $-40$ decibels of evidence, meaning that observing $F$ greatly favors $~H$ over $H$.  
+This amounts to $-40$ decibels of evidence, meaning that observing $F$ greatly favors $H^c$ over $H$.   
+ 
 
+---
+
+#Challenge Question
+
+
+In the die example above, show that the expectation of evidence in decibans $\mathit{E}(10 \log_{10}(\frac{p(E | H)}{p(E | H^c)})) $ is less than zero when the die is in fact unbiased.
+
+---
+
+
+---
+
+When the die is fair, there is a probability of $1/6$ that the factor will be $1/3 / 1/6 = 2$ and a probability of $5/6$ that the factor will be $4/5$. Hence 
+\begin{align} 
+\mathit{E}\left[10 \log_{10}(\frac{p(E | H)}{p(E | H^c)})\right] &\leq  10 \log_{10}(\mathit{E}\left[\frac{p(E | H)}{p(E | H^c)}\right])
+\newline
+&= 10 \log_{10}( \frac{1}{6} * 2 + \frac{5}{6} * \frac{4}{5} )
+\newline
+&= 10 \log_{10}( 1)
+\newline
+&= 0
+\end{align}
+by Jensen's inequality.
 
 
 ---
  
+The [receiver operating characteristic](https://en.wikipedia.org/wiki/Receiver_operating_characteristic), or ROC curve, for a classifier coming from a hypothesis $H$ is a plot of $p(E | H_t)$ vs $p(E | H^c_t)$ parametrized over various settings of a threshold $t$.
+$$
+$$
+The ROC curve was also first used during World War II for the analysis of radar signals before it was employed in signal detection theory.[29] 
+
+
+---
+
+
